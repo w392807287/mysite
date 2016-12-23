@@ -1,0 +1,13 @@
+Django==1.10.4
+djangorestframework==3.5.3
+docopt==0.6.2
+git-spindle==3.3
+github3.py==0.9.6
+hub==2.0
+jieba==0.38
+Markdown==2.6.7
+numpy==1.11.3
+requests==2.12.4
+uritemplate==3.0.0
+uritemplate.py==3.0.2
+whelk==2.7
