@@ -14,6 +14,7 @@ def deal_file(filename):
             ahp.saleAvgPrice = float(row[2])
             ahp.total = int(row[8])
             ahp.date = row[-1]
+            ahp.data_source = 'lianjia'
             print('-'*20)
             ahp.save()
 
