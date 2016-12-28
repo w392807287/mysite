@@ -3,11 +3,13 @@ from entity.models import *
 
 
 class AreaSerializer(serializers.ModelSerializer):
-    # higher = serializers.HyperlinkedIdentityField(
-    #     view_name='entity_areas',
-    #     lookup_field='name',
-    # )
+    higher = serializers.HyperlinkedRelatedField(
+        many=False,
+        read_only=True,
+        view_name='areas-detail',
+    )
+    # lower = serializers.HyperlinkedIdentityField(view_name='entity_areas')
 
     class Meta:
         model = Area
-        fields = ('id', 'name', 'level', 'code', 'higher', )
+        fields = ('id', 'name', 'level', 'code', 'higher')

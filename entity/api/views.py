@@ -5,13 +5,34 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework import generics
 from rest_framework import viewsets
+from rest_framework import mixins
 
 
-class AreaList(generics.ListAPIView):
-
+class AreaList(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  generics.GenericAPIView):
+    queryset = Area.objects.all()
     serializer_class = AreaSerializer
 
-    def get_queryset(self):
-        # aa = Area.objects.all()
-        # serializers = AreaSerializer(aa, many=True)
-        return JSONRenderer().render({'aa': 'bb'})
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class AreatDetail(mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin,
+                    generics.GenericAPIView):
+    queryset = Area.objects.all()
+    serializer_class = AreaSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
