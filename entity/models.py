@@ -22,3 +22,7 @@ class Area(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "地区"
+        verbose_name_plural = "地区"
