@@ -31,7 +31,7 @@ class File(models.Model):
 
 class AreaHousingPrice(models.Model):
     area = models.ForeignKey('entity.Area', related_name='area_hosing_price', null=True)
-    area_name = models.CharField('地区名', max_length=30, blank=True, default='')  # 字段冗余，优化查询
+    area_name = models.CharField('地区名', max_length=30, blank=True, default='', unique_for_date='date')  # 字段冗余，优化查询
     dealAvgPrice = models.FloatField('成交均价', null=True)
     saleAvgPrice = models.FloatField('挂牌均价', null=True)
     total = models.IntegerField('总共在售', default=0)
