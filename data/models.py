@@ -12,6 +12,10 @@ class Image(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "图像"
+        verbose_name_plural = "图像"
+
 
 class File(models.Model):
     title = models.CharField("文件名称", max_length=100, blank=True)
@@ -19,6 +23,10 @@ class File(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = "文件"
+        verbose_name_plural = "文件"
 
 
 class AreaHousingPrice(models.Model):
@@ -38,3 +46,7 @@ class AreaHousingPrice(models.Model):
             self.date = datetime.datetime.now().strftime('%Y-%m-%d')
 
         super(AreaHousingPrice, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "地区房价"
+        verbose_name_plural = "地区房价"

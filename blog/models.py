@@ -10,6 +10,10 @@ class Author(models.Model):
     username = models.CharField('用户名', max_length=255)
     followers = models.ManyToManyField('self', related_name='followees', symmetrical=False)
 
+    class Meta:
+        verbose_name = "作者"
+        verbose_name_plural = "作者"
+
 
 class Article(models.Model):
     title = models.CharField("博客标题", max_length=100)
