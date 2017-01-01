@@ -1,6 +1,6 @@
 from django.db import models
 from entity.models import Area
-from data.util.util import HOUSING_PRICE_SOURCE
+from data.util.util import HOUSING_PRICE_SOURCE, HOUSING_PRICE_TYPE
 import datetime
 # Create your models here.
 
@@ -34,6 +34,7 @@ class AreaHousingPrice(models.Model):
     area_name = models.CharField('地区名', max_length=30, blank=True, default='', unique_for_date='date')  # 字段冗余，优化查询
     dealAvgPrice = models.FloatField('成交均价', null=True)
     saleAvgPrice = models.FloatField('挂牌均价', null=True)
+    saleType = models.CharField('出售类型', max_length=255, choices=HOUSING_PRICE_TYPE, default='2')
     total = models.IntegerField('总共在售', default=0)
     date = models.DateField('日期', editable=True, null=True)
     data_source = models.CharField('数据来源', max_length=255, choices=HOUSING_PRICE_SOURCE, default='other')

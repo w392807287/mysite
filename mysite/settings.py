@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '112.74.58.83',
+    'data.liqiongyu.com',
 ]
 
 
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'blog',
     'data',
     'entity',
+    'crawl',
     'gunicorn',
 ]
 

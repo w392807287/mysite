@@ -4,8 +4,8 @@ from .models import Image, File, AreaHousingPrice
 
 
 class AreaHousingPriceAdmin(admin.ModelAdmin):
-    list_display = ('area_name', 'dealAvgPrice', 'saleAvgPrice', 'total', 'date', 'data_source')
-    list_filter = ('area_name', 'date', 'data_source')
+    list_display = ('area_name', 'saleType', 'dealAvgPrice', 'saleAvgPrice', 'total', 'date', 'data_source')
+    list_filter = ('area_name', 'saleType', 'date', 'data_source')
     search_fields = ('area_name',)
 
 
