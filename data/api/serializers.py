@@ -6,4 +6,4 @@ class AreaHousingPriceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AreaHousingPrice
-        fields = ('area_name', 'dealAvgPrice', 'saleAvgPrice', 'total', 'date', 'data_source')
+        fields = ('area_name', 'dealAvgPrice', 'saleAvgPrice', 'saleType', 'total', 'date', 'data_source')
