@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '112.74.58.83',
     'data.liqiongyu.com',
+    'yourposition.cn',
 ]
 
 
@@ -102,6 +103,9 @@ DATABASES = {
         'PASSWORD': private_settings.DATABASE_PASSWORD,
         'HOST': private_settings.DATABASE_HOST,
         'PORT': private_settings.DATABASE_PORT,
+        'OPTIONS': {
+                    'init_command': 'SET innodb_strict_mode=1',
+        },
     }
 }
 
