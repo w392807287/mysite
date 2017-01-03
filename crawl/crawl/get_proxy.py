@@ -5,12 +5,13 @@ import re
 import random
 import requests
 from multiprocessing.dummy import Pool as ThreadPool
-from multiprocessing import Pool
+from mongoengine import connect
+from multiprocessing import Pool as ProcessPool
 import queue
 from lxml import etree
-from mongoengine import *
 import time
 from mysite.private_settings import M_DB_NAME, M_DB_HOST, M_DB_PORT
+from requests.exceptions import RequestException
 
 
 def get_user_agent():
@@ -36,6 +37,24 @@ def fetch(url, proxy=None, params=None):
     return s.get(url, timeout=TIMEOUT, proxies=proxies, params=params)
 
 
+def prove_proxy(proxy):
+    try:
+        _ = fetch('http://baidu.com', proxy=proxy.address)
+        print('proxy {0} is ok....'.format(proxy.address))
+    except Exception as e:
+        print('proxy {0} make a error so was delete....'.format(proxy.address))
+        proxy.delete()
+
+
+def prove_proxies():
+    # connect(M_DB_NAME, host=M_DB_HOST, port=M_DB_PORT, connect=False)
+    proxies = Proxy.objects.all()
+    pool = ThreadPool(8)
+    pool.map(prove_proxy, proxies)
+    pool.close()
+    pool.join()
+
+
 def get_content_proxy(url, proxy=None, params=None):
     s = requests.Session()
     s.headers.update({'user-agent': get_user_agent()})
@@ -57,8 +76,23 @@ def get_content_proxy(url, proxy=None, params=None):
     return s.get(url, timeout=TIMEOUT, proxies=proxies, params=params)
 
 
+def deal_proxy(proxy):
+    try:
+        _ = fetch('http://baidu.com', proxy=proxy['address'])
+        p = Proxy()
+        for k, v in proxy.items():
+            p.__setattr__(k, v)
+        p.save()
+        print('proxy {0} is ok....'.format(proxy['address']))
+    except Exception as e:
+        print('proxy {0} make a error so was delete....'.format(proxy['address']))
+
+
 def deal_proxies(proxies):
-    print(proxies)
+    pool = ThreadPool(10)
+    pool.map(deal_proxy, proxies)
+    pool.close()
+    pool.join()
 
 
 def deal_kuaidaili_url(url, page=1):
@@ -84,6 +118,28 @@ def deal_kuaidaili_url(url, page=1):
     deal_kuaidaili_url(url, page=page)
 
 
+def deal_xici_url(url):
+    host = 'http://www.xicidaili.com'
+    text = get_content_proxy(url).text
+    html = etree.HTML(text)
+    trs = html.xpath('//table[@id="ip_list"]/tr')[1:]
+    if len(trs) < 5:
+        return
+    proxies = []
+    for tr in trs:
+        proxy = {}
+        data = [x.strip() for x in tr.xpath('string(.)').strip().split('\n') if x.strip() != '']
+        proxy['address'] = '{ip}:{port}'.format(ip=data[0], port=data[1])
+        proxy['position'] = data[2]
+        proxy['anonymity'] = data[3]
+        proxy['type'] = data[4]
+        proxies.append(proxy)
+    deal_proxies(proxies)
+    nextpage = html.xpath('//a[@class="next_page"]/@href')[0]
+    url2 = host + nextpage
+    deal_xici_url(url2)
+
+
 def spider_kuaidaili():
     kuaidaili_urls = [
         'http://www.kuaidaili.com/free/inha/{0}',
@@ -91,11 +147,26 @@ def spider_kuaidaili():
         'http://www.kuaidaili.com/free/outha/{0}',
         'http://www.kuaidaili.com/free/outtr/{0}',
     ]
-    pool = Pool(4)
+    pool = ThreadPool(4)
     pool.map(deal_kuaidaili_url, kuaidaili_urls)
     pool.close()
     pool.join()
 
 
+def spider_xici():
+    xici_urls = [
+        'http://www.xicidaili.com/nn/',
+        'http://www.xicidaili.com/nt/',
+        'http://www.xicidaili.com/wn/',
+        'http://www.xicidaili.com/wt/',
+    ]
+    pool = ThreadPool(4)
+    pool.map(deal_xici_url, xici_urls)
+    pool.close()
+    pool.join()
+
+
 def main():
-    spider_kuaidaili()
+    # prove_proxies()
+    # spider_kuaidaili()
+    spider_xici()
