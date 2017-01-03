@@ -97,15 +97,12 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': private_settings.DATABASE_NAME,
         'USER': private_settings.DATABASE_USERNAME,
         'PASSWORD': private_settings.DATABASE_PASSWORD,
-        'HOST': private_settings.DATABASE_HOST,
-        'PORT': private_settings.DATABASE_PORT,
-        'OPTIONS': {
-                    'init_command': 'SET sql_mode="STRICT_TRANS_TABLES", innodb_strict_mode=1',
-        },
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
