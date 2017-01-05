@@ -5,12 +5,10 @@ import re
 import random
 import requests
 from multiprocessing.dummy import Pool as ThreadPool
-from mongoengine import connect
 from multiprocessing import Pool as ProcessPool
 import queue
 from lxml import etree
 import time
-from mysite.private_settings import M_DB_NAME, M_DB_HOST, M_DB_PORT
 from requests.exceptions import RequestException
 
 
@@ -55,7 +53,7 @@ def prove_proxies():
     pool.join()
 
 
-def get_content_proxy(url, proxy=None, params=None):
+def get_content_proxy(url, proxy=None, proxyd=False, params=None):
     s = requests.Session()
     s.headers.update({'user-agent': get_user_agent()})
     if proxy:
@@ -63,14 +61,17 @@ def get_content_proxy(url, proxy=None, params=None):
             'http': proxy
         }
     else:
-        try:
-            proxy = Proxy.get_random()
-        except:
-            pass
-        if proxy:
-            proxies = {
-                proxy.type: proxy.address,
-            }
+        if proxyd:
+            try:
+                proxy = Proxy.get_random()
+            except:
+                pass
+            if proxy:
+                proxies = {
+                    proxy.type: proxy.address,
+                }
+            else:
+                proxies = None
         else:
             proxies = None
     return s.get(url, timeout=TIMEOUT, proxies=proxies, params=params)
@@ -98,7 +99,7 @@ def deal_proxies(proxies):
 def deal_kuaidaili_url(url, page=1):
     # connect(M_DB_NAME, host=M_DB_HOST, port=M_DB_PORT)
     url2 = url.format(page)
-    text = get_content_proxy(url2).text
+    text = get_content_proxy(url2, proxyd=True).text
     html = etree.HTML(text)
     trs = html.xpath('//tr')
     if len(trs) < 1:
@@ -168,5 +169,8 @@ def spider_xici():
 
 def main():
     # prove_proxies()
-    # spider_kuaidaili()
-    spider_xici()
+    p = ProcessPool(4)
+    p.apply_async(spider_kuaidaili)
+    p.apply_async(spider_xici)
+    p.close()
+    p.join()

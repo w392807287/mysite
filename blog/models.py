@@ -59,16 +59,18 @@ class Article(models.Model):
 
     author = models.ForeignKey(Author, related_name='posts', verbose_name='作者')
 
-    simhash_code = models.CharField('sim哈希', max_length=64, blank=True, null=True)
-
-    category = models.CharField(verbose_name="文章分类", blank=True, max_length=255, default='')
+    # category = models.CharField(verbose_name="文章分类", blank=True, max_length=255, default='')
+    category = models.ManyToManyField(Category, related_name='category')
     tags = models.CharField(verbose_name='文章标签', blank=True, max_length=255, default='')
     column = models.ForeignKey(Column, verbose_name='所属专栏', blank=True, null=True)
+    reading_count = models.IntegerField('阅读量', null=False, default=0)
 
     pub_date = models.DateTimeField("发布日期", auto_now_add=True, editable=True)
     update_time = models.DateTimeField("更新时间", auto_now=True, null=True)
 
+    simhash_code = models.CharField('sim哈希', max_length=64, blank=True, null=True)
     keywords = models.CharField("文章关键词", blank=True, max_length=255)
+
     summary = models.TextField("文章简介", blank=True, default="这鬼作者忘了写简介")
     content = models.TextField("文章正文", default='', blank=True)
 
